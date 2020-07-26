@@ -9,6 +9,7 @@ class ReferrerViewSet(ReferrerProfileViewSetMixin, ListRetrieveUpdateViewSet):
     queryset = Referrer.objects.all()
     serializer_class = ReferrerSerializer
     permission_classes = [IsSuperUser | IsReferrer]
+    serializer_include_fields = ['user', 'referred', 'dob']
 
     def get_object(self):
         return self.referrer

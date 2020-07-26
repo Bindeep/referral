@@ -54,6 +54,10 @@ class BaseViewSet(GenericViewSet):
     def get_serializer_exclude_fields(self):
         return self.serializer_exclude_fields
 
+    @property
+    def user(self):
+        return self.request.user
+
 
 class ListViewSet(ListModelMixin, BaseViewSet):
     pass

@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from apps.referrer.api.v1.views import ReferrerViewSet
+from apps.referral.api.v1.views import ReferralViewSet
 
 app_name = 'referral'
 
@@ -9,7 +9,7 @@ router = routers.DefaultRouter()
 
 router.register(
     r'',
-    ReferrerViewSet,
+    ReferralViewSet,
     basename='referral'
 )
 

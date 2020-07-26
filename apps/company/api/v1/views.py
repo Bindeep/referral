@@ -13,5 +13,3 @@ class CategoryViewSet(CreateListUpdateViewSet):
         if self.request.method.upper() == 'POST':
             return ['slug']
         return super().get_serializer_exclude_fields()
-
-

@@ -1,10 +1,12 @@
+from rest_framework import serializers
+
+from apps.company.api.v1.serializers import CompanySerializer
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
 from apps.referral.models import Referral
 from apps.referrer.api.v1.serializers import ReferrerSerializer
 
 
 class ReferralSerializer(DynamicFieldsModelSerializer):
-    referrer = ReferrerSerializer()
 
     class Meta:
         model = Referral
@@ -17,3 +19,8 @@ class ReferralSerializer(DynamicFieldsModelSerializer):
             fields['company'] = CompanySerializer()
         return fields
 
+    def update_get_fields(self, fields):
+        fields = ['full_name', 'phone', 'email']
+        for field in fields:
+            fields[field] = serializers.ReadOnlyField(source='referrer.user.{}'.format(field))
+        return super().update_get_fields(fields)

@@ -5,15 +5,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.common.api.v1.serializers import (
-    CountrySerializer, ProvinceSerializer,
-    CitySerializer, DistrictSerializer, ArticleSerializer
+    CitySerializer, ArticleSerializer
 )
-from apps.common.models import (
-    Country, Province, City,
-    District, Article
-)
+from apps.common.models import City, Article
 from apps.core.permissions import IsSuperUser
-from apps.core.viewsets import ReadOnlyViewSet, CustomModelViewSet
+from apps.core.viewsets import ReadOnlyViewSet, CustomModelViewSet, CreateListUpdateViewSet
 
 
 class CommonViewSet(ReadOnlyViewSet):
@@ -23,27 +19,16 @@ class CommonViewSet(ReadOnlyViewSet):
     search_fields = ['name', ]
 
 
-class CountryViewSet(CommonViewSet):
-    queryset = Country.objects.all()
-    serializer_class = CountrySerializer
-
-
-class ProvinceViewSet(CommonViewSet):
-    queryset = Province.objects.all()
-    serializer_class = ProvinceSerializer
-    filter_fields = ['country', ]
-
-
-class DistrictViewSet(CommonViewSet):
-    queryset = District.objects.all()
-    serializer_class = DistrictSerializer
-    filter_fields = ['province', ]
-
-
-class CityViewSet(CommonViewSet):
+class CityViewSet(CreateListUpdateViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
-    filter_fields = ['district', ]
+    search_fields = ['name', ]
+    permission_class_mapper = {
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
+        'create': [IsSuperUser],
+        'update': [IsSuperUser]
+    }
 
 
 class ArticleViewSet(CustomModelViewSet):

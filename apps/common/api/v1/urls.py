@@ -7,12 +7,6 @@ app_name = 'common'
 router = routers.DefaultRouter()
 
 router.register(
-    r'district',
-    views.DistrictViewSet,
-    basename='district'
-)
-
-router.register(
     r'city',
     views.CityViewSet,
     basename='city'
