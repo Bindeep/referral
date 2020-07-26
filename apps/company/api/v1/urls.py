@@ -1,31 +1,15 @@
 from rest_framework import routers
 
+from apps.company.api.v1.views import CategoryViewSet
+
 app_name = 'company'
 
 router = routers.DefaultRouter()
 
 router.register(
-    r'country',
-    views.CountryViewSet,
-    basename='country'
-)
-
-router.register(
-    r'district',
-    views.DistrictViewSet,
-    basename='district'
-)
-
-router.register(
-    r'city',
-    views.CityViewSet,
-    basename='city'
-)
-
-router.register(
-    r'province',
-    views.ProvinceViewSet,
-    basename='province'
+    r'category',
+    CategoryViewSet,
+    basename='category'
 )
 
 urlpatterns = [
