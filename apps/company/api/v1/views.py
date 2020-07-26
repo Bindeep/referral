@@ -11,7 +11,7 @@ class CompanyViewSet(ListViewSet):
     serializer_include_fields = [
         'referral_code', 'city',
         'name', 'contact_person',
-        'description',
+        'description', 'phone_number',
         'location',
         'category'
     ]
