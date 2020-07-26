@@ -8,3 +8,10 @@ class CategoryViewSet(CreateListUpdateViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsSuperUser]
+
+    def get_serializer_exclude_fields(self):
+        if self.request.method.upper() == 'POST':
+            return ['slug']
+        return super().get_serializer_exclude_fields()
+
+

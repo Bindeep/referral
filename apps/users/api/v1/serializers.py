@@ -1,3 +1,5 @@
+import copy
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import FileExtensionValidator
@@ -9,7 +11,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Pass
 
 from apps.common.models import City
 from apps.company.models import Category, Company
-from apps.core.mixins.serializers import DummySerializer, DynamicFieldsModelSerializer
+from apps.core.mixins.serializers import DummySerializer, DynamicFieldsModelSerializer, DummyObject
 from apps.core.validators import validate_attachment
 from apps.referrer.models import Referrer
 
@@ -197,6 +199,7 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
         ]
 
     def create(self, validated_data):
+        copied_data = copy.deepcopy(validated_data)
         name = validated_data.pop('name', None)
         description = validated_data.pop('description', None)
         category = validated_data.pop('category', None)
@@ -214,7 +217,7 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
                 location=location
             )
             company.save()
-        return user
+        return DummyObject(**copied_data)
 
 
 class CustomTokenObtainPairSerializer(DummySerializer, TokenObtainPairSerializer):
