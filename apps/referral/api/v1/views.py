@@ -20,14 +20,14 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         if self.user.is_company:
-            qs = qs.filter(self.user.company)
+            qs = qs.filter(company=self.user.company)
         elif self.user.is_referrer:
-            qs = qs.filter(self.user.referrer)
+            qs = qs.filter(referrer=self.user.referrer)
         return qs
 
     @action(
         detail=True,
-        methods=['post', ],
+        methods=['put', ],
         serializer_class=ReferralSerializer,
         url_name='update_amount',
         url_path='amount-update',
@@ -38,7 +38,7 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
     @action(
         detail=True,
-        methods=['post', ],
+        methods=['put', ],
         serializer_class=ReferralSerializer,
         url_name='update_status',
         url_path='status-update',
