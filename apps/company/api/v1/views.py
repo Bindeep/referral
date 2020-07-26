@@ -8,6 +8,13 @@ class CompanyViewSet(ListViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [IsSuperUser]
+    serializer_include_fields = [
+        'referral_code', 'city',
+        'name', 'contact_person',
+        'description',
+        'location',
+        'category'
+    ]
 
 
 class CategoryViewSet(CreateListUpdateViewSet):

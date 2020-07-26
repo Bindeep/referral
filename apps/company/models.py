@@ -54,16 +54,16 @@ class Company(BaseModel, SlugModel):
         like if Foo Bar is full name the their username would be F****B (* could be any integer)
         """
         if not self.referral_code:
-            self.username = self.get_unique_code()
+            self.referral_code = self.get_unique_code()
         return super().save(*args, **kwargs)
 
     def get_unique_code(self):
         count = 1
-        random_username = self.get_random_code()
-        while self.__class__.objects.filter(referral_code=random_username).exists():
+        code = self.get_random_code()
+        while self.__class__.objects.filter(referral_code=code).exists():
             random_username = self.get_random_code() if count < 50 else self.get_random_code('')
             count += 1
-        return random_username
+        return code
 
     @staticmethod
     def get_random_letter():
