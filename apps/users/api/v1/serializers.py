@@ -40,7 +40,7 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
             'full_name',
             'email',
             'gender',
-            'phone_number',
+            'phone',
             'created_at',
             'is_staff',
             'last_login',
@@ -75,7 +75,7 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
                     )
                 ]
             },
-            'phone_number': {
+            'phone': {
                 'validators': []
             }
         }
@@ -101,7 +101,7 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
                 'Both Password must be same'
             ))
 
-        phone_number = attrs.get('phone_number')
+        phone_number = attrs.get('phone')
 
         user_qs = USER.objects.all()
 
@@ -110,7 +110,7 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
 
         if user_qs.filter(phone_number=phone_number).exists():
             raise serializers.ValidationError({
-                'phone_number': _(
+                'phone': _(
                     'You cannot create user with this phone number.'
                 )
             })
