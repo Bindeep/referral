@@ -20,7 +20,7 @@ class ReferralSerializer(DynamicFieldsModelSerializer):
         return fields
 
     def update_get_fields(self, fields):
-        fields = ['full_name', 'phone', 'email']
-        for field in fields:
+        new_fields = ['full_name', 'phone', 'email']
+        for field in new_fields:
             fields[field] = serializers.ReadOnlyField(source='referrer.user.{}'.format(field))
         return super().update_get_fields(fields)

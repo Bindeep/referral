@@ -1,7 +1,13 @@
-from apps.company.api.v1.serializers import CategorySerializer
-from apps.company.models import Category
+from apps.company.api.v1.serializers import CategorySerializer, CompanySerializer
+from apps.company.models import Category, Company
 from apps.core.permissions import IsSuperUser
-from apps.core.viewsets import CreateListUpdateViewSet
+from apps.core.viewsets import CreateListUpdateViewSet, ListViewSet
+
+
+class CompanyViewSet(ListViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [IsSuperUser]
 
 
 class CategoryViewSet(CreateListUpdateViewSet):
