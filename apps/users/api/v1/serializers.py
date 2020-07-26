@@ -173,7 +173,7 @@ class ReferrerRegisterSerializer(AdminRegisterSerializer):
             Referrer.objects.create(
                 user=user,
                 dob=dob,
-                company=company
+                referred_by=company
             )
         return user
 
