@@ -29,6 +29,13 @@ go inside project folder and make sure environment is activated
 python manage.py migrate
 ```
 
+
+##### Seed locations
+Seed country, province, district and city with management command
+```sh
+python manage.py seed_locations
+```
+
 ##### Create superuser
 ```sh
 python manage.py createsuperuser

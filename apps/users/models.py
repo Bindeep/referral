@@ -42,7 +42,7 @@ class User(AbstractUser, BaseModel):
         blank=True
     )
 
-    phone_number = models.CharField(
+    phone = models.CharField(
         _('phone number'),
         null=True,
         validators=[validate_phone_number],
