@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.core.permissions import IsSuperUser
-from apps.core.viewsets import CreateListRetrieveViewSet
+from apps.core.viewsets import CreateListRetrieveViewSet, ReadOnlyViewSet
 from apps.users.api.v1.serializers import (
     UserDetailSerializer,
     CustomTokenObtainPairSerializer, PasswordChangeSerializer,
@@ -22,7 +22,7 @@ class CustomTokenViewBase(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-class UserViewSet(CreateListRetrieveViewSet):
+class UserViewSet(ReadOnlyViewSet):
     serializer_class = UserDetailSerializer
     queryset = USER.objects.filter(is_active=True)
     permission_class_mapper = {
@@ -50,7 +50,7 @@ class UserViewSet(CreateListRetrieveViewSet):
         methods=['post', ],
         serializer_class=CompanyRegisterSerializer,
         url_name='register_company',
-        url_path='referrer-company'
+        url_path='register-company'
     )
     def company_register(self, request, *args, **kwargs):
         return self.create(request, args, kwargs)

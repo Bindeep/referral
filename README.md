@@ -2,7 +2,7 @@
 
 ##### Pull the code from the server.
 ```sh
-django-admin startproject --template https://github.com/Bindeep/api-template/archive/master.zip <project_name>
+git clone https://gitlab.com/Bindeep/referral.git
 ```
 
 ##### Create virtual Environment
