@@ -21,4 +21,5 @@ class CompanySerializer(DynamicFieldsModelSerializer):
         fields['category'] = serializers.ReadOnlyField(source='category.name')
         fields['city'] = serializers.ReadOnlyField(source='city.name')
         fields['contact_person'] = serializers.ReadOnlyField(source='user.full_name')
+        fields['phone_number'] = serializers.ReadOnlyField(source='user.phone')
         return fields
