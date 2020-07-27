@@ -1,6 +1,8 @@
 from rest_framework import routers
 from apps.common.api.v1 import views
+from rest_framework import routers
 
+from apps.common.api.v1 import views
 
 app_name = 'common'
 

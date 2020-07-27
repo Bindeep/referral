@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
-from apps.core.viewsets import CreateListRetrieveViewSet, CreateListRetrieveUpdateViewSet
+from apps.core.viewsets import CreateListRetrieveUpdateViewSet
 from apps.referral.api.v1.serializers import ReferralSerializer
 from apps.referral.models import Referral
 
@@ -19,6 +19,11 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        if self.action == 'update':
+            return self.http_method_not_allowed(request)
 
     def get_serializer_exclude_fields(self):
         if self.action == 'create':

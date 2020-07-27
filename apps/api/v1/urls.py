@@ -7,5 +7,5 @@ urlpatterns = [
     path('referrer/', include('apps.referrer.api.v1.urls')),
     path('referral/', include('apps.referral.api.v1.urls')),
     path('common/', include('apps.common.api.v1.urls')),
-    path('company/', include('apps.company.api.v1.urls')),
+    path('company/', include('apps.company.api.v1.urls'))
 ]

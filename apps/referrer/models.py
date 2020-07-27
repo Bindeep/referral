@@ -22,3 +22,4 @@ class Referrer(BaseModel):
         on_delete=models.SET_NULL
     )
     dob = models.DateField(null=True)
+

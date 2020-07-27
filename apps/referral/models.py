@@ -30,6 +30,7 @@ class Referral(BaseModel):
         null=True,
         on_delete=models.SET_NULL
     )
+    remarks = models.TextField(blank=True, default='')
 
     # Referral information
     name = models.CharField(max_length=255)

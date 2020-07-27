@@ -1,5 +1,7 @@
+from django.urls import path
 from rest_framework import routers
 
+from apps.common.api.v1.views import DashboardAPIView
 from apps.company.api.v1.views import CategoryViewSet, CompanyViewSet
 
 app_name = 'company'
@@ -19,6 +21,7 @@ router.register(
 )
 
 urlpatterns = [
+    path('dashboard', DashboardAPIView.as_view(), name='dashboard')
 ]
 
 urlpatterns += router.urls

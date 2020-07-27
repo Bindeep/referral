@@ -1,4 +1,7 @@
+from rest_framework import serializers
+
 from apps.common.models import City, Article
+from apps.core.fields import Base64ImageField
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
 
 
@@ -10,7 +13,12 @@ class CitySerializer(DynamicFieldsModelSerializer):
 
 
 class ArticleSerializer(DynamicFieldsModelSerializer):
+    image = Base64ImageField()
 
     class Meta:
         model = Article
         fields = '__all__'
+
+    def update_get_fields(self, fields):
+        fields['image'] = serializers.ImageField(use_url=True, read_only=True)
+        return fields
