@@ -12,7 +12,7 @@ class CompanyViewSet(ListViewSet):
         'referral_code', 'city',
         'name', 'contact_person',
         'description', 'phone_number',
-        'location',
+        'location', 'email',
         'category'
     ]
 
