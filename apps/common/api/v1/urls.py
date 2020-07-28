@@ -21,7 +21,7 @@ router.register(
 )
 
 router.register(
-    r'(?P<user_id>(\d+|me))',
+    r'notification/(?P<user_id>(\d+|me))',
     NotificationViewSet,
     basename='notification'
 )
