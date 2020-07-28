@@ -8,6 +8,12 @@ class IsSuperUser(BasePermission):
             request.user.is_authenticated) and request.user.is_superuser
 
 
+class IsReadOnly(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS
+
+
 class IsReferrer(BasePermission):
 
     def has_permission(self, request, view):
