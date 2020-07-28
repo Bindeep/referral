@@ -7,11 +7,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.common.api.v1.serializers import (
-    CitySerializer, ArticleSerializer
+    CitySerializer, ArticleSerializer, UserNotificationSerializer
 )
-from apps.common.models import City, Article
+from apps.common.models import City, Article, UserNotification
 from apps.core.permissions import IsSuperUser, IsCompany
-from apps.core.viewsets import ReadOnlyViewSet, CustomModelViewSet, CreateListUpdateViewSet
+from apps.core.viewsets import ReadOnlyViewSet, CustomModelViewSet, CreateListUpdateViewSet, ListUpdateViewSet
 from apps.referral.constants import PENDING, PROGRESS, FAILED, COMPLETED
 from apps.referral.models import Referral
 from apps.referrer.models import Referrer
@@ -84,3 +84,20 @@ class ArticleViewSet(CustomModelViewSet):
         instance.is_archived = True
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class NotificationViewSet(ListUpdateViewSet):
+    queryset = UserNotification.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserNotificationSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.kwargs.get('user_id') == 'me':
+            return queryset.filter(sent_to=self.request.user)
+
+        if self.request.user.is_staff:
+            return queryset.filter(sent_to=self.kwargs.get('user_id'))
+        else:
+            return queryset.none()
+

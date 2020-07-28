@@ -78,3 +78,13 @@ class User(AbstractUser, BaseModel):
     @property
     def is_company(self):
         return hasattr(self, 'company')
+
+
+class UserDevice(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
+    registration_id = models.CharField(max_length=200, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        UserDevice.objects.all().delete()
+        super().save(*args, **kwargs)

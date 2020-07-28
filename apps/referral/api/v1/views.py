@@ -1,6 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
+from apps.common.constants import POSITIVE
+from apps.common.models import UserNotification
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
 from apps.core.viewsets import CreateListRetrieveUpdateViewSet
 from apps.referral.api.v1.serializers import ReferralSerializer
@@ -19,6 +22,15 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
+
+    current_status = ''
+    next_status = ''
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        if self.action == 'create':
+            ctx['referrer'] = self.request.user.referrer
+        return ctx
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
@@ -58,4 +70,22 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         serializer_include_fields=['status']
     )
     def update_status(self, request, *args, **kwargs):
-        return self.update(request, args, kwargs)
+        obj = self.get_object()
+        self.current_status = obj.status
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data,
+            partial=kwargs.pop('partial', False)
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    @staticmethod
+    def add_referrer_notification(user):
+        UserNotification.objects.create(**{
+            'title': 'Your lead has been generated',
+            'sent_to': user,
+            'notification_type': POSITIVE,
+            'content': 'Your lead has been generated with'
+        })

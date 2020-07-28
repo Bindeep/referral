@@ -1,0 +1,7 @@
+POSITIVE, NEGATIVE, INFO = 'Positive', 'Negative', 'Info'
+
+NOTIFICATION_TYPE_CHOICES = (
+    (POSITIVE, POSITIVE),
+    (NEGATIVE, NEGATIVE),
+    (INFO, INFO),
+)

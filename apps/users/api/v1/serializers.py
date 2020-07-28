@@ -14,6 +14,7 @@ from apps.company.models import Category, Company
 from apps.core.mixins.serializers import DummySerializer, DynamicFieldsModelSerializer, DummyObject
 from apps.core.validators import validate_attachment
 from apps.referrer.models import Referrer
+from apps.users.models import UserDevice
 
 USER = get_user_model()
 
@@ -226,3 +227,20 @@ class CustomTokenObtainPairSerializer(DummySerializer, TokenObtainPairSerializer
         data = super().validate(attrs)
         data['user'] = UserDetailSerializer(instance=self.user).data
         return data
+
+
+class UserDeviceSerializer(DynamicFieldsModelSerializer):
+
+    def create(self, validated_data):
+        if self.request and self.request.user:
+            validated_data['user'] = self.request.user
+        return super().create(validated_data)
+
+    class Meta:
+        model = UserDevice
+        exclude = ['is_active', 'created_at', 'user']
+        extra_kwargs = {
+            "registration_id": {
+                "validators": []
+            }
+        }

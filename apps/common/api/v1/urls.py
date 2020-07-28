@@ -1,8 +1,7 @@
 from rest_framework import routers
-from apps.common.api.v1 import views
-from rest_framework import routers
 
 from apps.common.api.v1 import views
+from apps.common.api.v1.views import NotificationViewSet
 
 app_name = 'common'
 
@@ -19,6 +18,12 @@ router.register(
     r'article',
     views.ArticleViewSet,
     basename='article'
+)
+
+router.register(
+    r'(?P<user_id>(\d+|me))',
+    NotificationViewSet,
+    basename='notification'
 )
 
 urlpatterns = [

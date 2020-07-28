@@ -6,4 +6,8 @@ class ReferralSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Referral
-        fields = '__all__'
+        exclude = ['referrer']
+
+    def create(self, validated_data):
+        validated_data['referrer'] = self.context.get('referrer')
+        return super().create(validated_data)

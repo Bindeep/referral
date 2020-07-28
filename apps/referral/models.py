@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models.signals import post_save
 
-from apps.common.models import City
+from apps.common.constants import INFO, POSITIVE
+from apps.common.models import City, UserNotification
 from apps.company.models import Company, Category
 from apps.core.models import BaseModel
 from apps.core.validators import validate_phone_number
@@ -53,4 +54,18 @@ def assign_company(sender, instance, created, **kwargs):
         instance.save()
 
 
+def send_referral_notifications(sender, instance, created, **kwargs):
+    if created:
+        UserNotification.objects.create(**{
+            'title': 'Your lead has been generated',
+            'sent_to': instance.referrer.user,
+            'notification_type': POSITIVE,
+            'content': 'Your lead has been generated with category {} and city {}'.format(
+                str(instance.category),
+                str(instance.city)
+            )
+        })
+
+
 post_save.connect(assign_company, sender=Company)
+post_save.connect(send_referral_notifications, sender=Referral)
