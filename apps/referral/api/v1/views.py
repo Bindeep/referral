@@ -2,11 +2,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from apps.common.constants import POSITIVE
+from apps.common.constants import POSITIVE, NEGATIVE
 from apps.common.models import UserNotification
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
 from apps.core.viewsets import CreateListRetrieveUpdateViewSet
 from apps.referral.api.v1.serializers import ReferralSerializer
+from apps.referral.constants import FAILED
 from apps.referral.models import Referral
 
 
@@ -22,9 +23,6 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
-
-    current_status = ''
-    next_status = ''
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
@@ -59,6 +57,12 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         serializer_include_fields=['amount']
     )
     def update_amount(self, request, *args, **kwargs):
+        serializer = self.update_referral(request, *args, **kwargs)
+        obj = self.get_object()
+        self.add_amount_notification(
+            obj.referrer.user,
+            serializer.data.get('amount')
+        )
         return self.update(request, args, kwargs)
 
     @action(
@@ -71,7 +75,41 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
     )
     def update_status(self, request, *args, **kwargs):
         obj = self.get_object()
-        self.current_status = obj.status
+        current_status = obj.status
+        status = request.data.get('status')
+
+        serializer = self.update_referral(request, *args, **kwargs)
+
+        if current_status != status:
+            self.add_status_notification(
+                obj.referrer.user,
+                current_status,
+                status
+            )
+        return Response(serializer.data)
+
+    @staticmethod
+    def add_status_notification(user, current_status, status):
+        UserNotification.objects.create(**{
+            'title': 'Lead status Updated',
+            'sent_to': user,
+            'notification_type': NEGATIVE if status == FAILED else POSITIVE,
+            'content': 'Your lead status has been changed from {} to {}'.format(
+                current_status,
+                status
+            )
+        })
+
+    @staticmethod
+    def add_amount_notification(user, amount):
+        UserNotification.objects.create(**{
+            'title': 'Lead amount Updated',
+            'sent_to': user,
+            'notification_type': POSITIVE,
+            'content': 'Your lead amount has been updated to {}'.format(amount)
+        })
+
+    def update_referral(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(
             instance, data=request.data,
@@ -79,13 +117,4 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        return Response(serializer.data)
-
-    @staticmethod
-    def add_referrer_notification(user):
-        UserNotification.objects.create(**{
-            'title': 'Your lead has been generated',
-            'sent_to': user,
-            'notification_type': POSITIVE,
-            'content': 'Your lead has been generated with'
-        })
+        return serializer
