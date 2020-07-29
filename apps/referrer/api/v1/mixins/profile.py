@@ -13,7 +13,7 @@ class ReferrerProfileViewSetMixin:
 
     :cvar referrer_id_url_kwarg: URL kwarg containing referrer id
     """
-    referrer_id_url_kwarg = 'referrer_id'
+    referrer_id_url_kwarg = 'pk'
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)

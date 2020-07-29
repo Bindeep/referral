@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -59,11 +60,14 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
     def update_amount(self, request, *args, **kwargs):
         serializer = self.update_referral(request, *args, **kwargs)
         obj = self.get_object()
-        self.add_amount_notification(
-            obj.referrer.user,
-            serializer.data.get('amount')
-        )
-        return self.update(request, args, kwargs)
+        if obj.amount is None:
+            self.add_amount_notification(
+                obj,
+                serializer.data.get('amount')
+            )
+            return self.update(request, args, kwargs)
+        else:
+            return Response({'error': 'Amount has already been updated once.'} ,status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=True,
@@ -82,31 +86,40 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
         if current_status != status:
             self.add_status_notification(
-                obj.referrer.user,
+                obj,
                 current_status,
                 status
             )
         return Response(serializer.data)
 
     @staticmethod
-    def add_status_notification(user, current_status, status):
+    def add_status_notification(obj, current_status, status):
         UserNotification.objects.create(**{
             'title': 'Lead status Updated',
-            'sent_to': user,
+            'sent_to': obj.referrer.user,
             'notification_type': NEGATIVE if status == FAILED else POSITIVE,
-            'content': 'Your lead status has been changed from {} to {}'.format(
+            'content': 'Your lead status on {} with {} category at city {} has been changed from {} to {}'.format(
+                obj.name,
+                str(obj.category),
+                str(obj.city),
                 current_status,
                 status
             )
         })
 
     @staticmethod
-    def add_amount_notification(user, amount):
+    def add_amount_notification(obj, amount):
         UserNotification.objects.create(**{
             'title': 'Lead amount Updated',
-            'sent_to': user,
+            'sent_to': obj.referrer.user,
             'notification_type': POSITIVE,
-            'content': 'Your lead amount has been updated to {}'.format(amount)
+            'content': 'Congratulations, You have earned Rs. {} from your lead on {} with {} at {}'.format(
+                amount,
+                obj.name,
+                str(obj.category),
+                str(obj.city),
+
+            )
         })
 
     def update_referral(self, request, *args, **kwargs):

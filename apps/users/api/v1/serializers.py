@@ -121,8 +121,8 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
 
 
 class AdminRegisterSerializer(DynamicFieldsModelSerializer):
-    password = PasswordField(max_length=15, min_length=5)
-    repeat_password = PasswordField(max_length=15, min_length=5)
+    password = PasswordField(max_length=30, min_length=5)
+    repeat_password = PasswordField(max_length=30, min_length=5)
 
     class Meta:
         model = USER

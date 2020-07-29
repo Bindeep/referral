@@ -40,7 +40,7 @@ class Referral(BaseModel):
         validators=[validate_phone_number]
     )
 
-    amount = models.FloatField(default=0)
+    amount = models.FloatField(null=True, default=None)
     status = models.CharField(choices=STATUS_CHOICES, max_length=20, default=PENDING)
 
     def __str__(self):
