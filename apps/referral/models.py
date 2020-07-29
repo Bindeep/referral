@@ -60,7 +60,8 @@ def send_referral_notifications(sender, instance, created, **kwargs):
             'title': 'Your lead has been generated',
             'sent_to': instance.referrer.user,
             'notification_type': POSITIVE,
-            'content': 'Your lead has been generated with category {} and city {}'.format(
+            'content': 'Your lead {} has been generated with category {} and city {}'.format(
+                instance.name,
                 str(instance.category),
                 str(instance.city)
             )
