@@ -34,6 +34,7 @@ class PasswordChangeSerializer(DummySerializer):
 
 
 class UserDetailSerializer(DynamicFieldsModelSerializer):
+    user_type = serializers.SerializerMethodField()
 
     class Meta:
         model = USER
@@ -44,71 +45,20 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
             'email',
             'gender',
             'phone',
-            'created_at',
             'is_staff',
             'last_login',
             'profile_picture',
+            'user_type'
         )
-        extra_kwargs = {
-            'full_name': {
-                'required': True,
-                'allow_blank': False
-            },
-            'gender': {
-                'required': False,
-                'allow_blank': True
-            },
-            'profile_picture': {
-                'required': False,
-                'allow_null': True,
-                'validators': [
-                    FileExtensionValidator(
-                        allowed_extensions=['jpg', 'png']
-                    ),
-                    validate_attachment
-                ],
-                'use_url': True
-            },
-            'phone': {
-                'validators': []
-            }
-        }
 
-    def get_fields(self):
-        fields = super().get_fields()
-        if self.request and self.request.method.upper() == 'POST':
-            fields['password1'] = PasswordField(max_length=20, min_length=5)
-            fields['password2'] = PasswordField(max_length=20, min_length=5)
-            fields['referral_code'] = serializers.CharField(
-                max_length=10,
-                allow_null=True,
-                required=False,
-                allow_blank=True
-            )
-        return fields
-
-    def validate(self, attrs):
-        password1 = attrs.get('password1')
-        password2 = attrs.get('password2')
-        if password1 and password2 and password1 != password2:
-            raise serializers.ValidationError(_(
-                'Both Password must be same'
-            ))
-
-        phone_number = attrs.get('phone')
-
-        user_qs = USER.objects.all()
-
-        if self.instance:
-            user_qs = user_qs.exclude(id=self.instance.id)
-
-        if user_qs.filter(phone_number=phone_number).exists():
-            raise serializers.ValidationError({
-                'phone': _(
-                    'You cannot create user with this phone number.'
-                )
-            })
-        return super().validate(attrs)
+    @staticmethod
+    def get_user_type(user):
+        if user.is_company:
+            return 'Company'
+        if user.is_referrer:
+            return 'Referrer'
+        else:
+            return 'Admin'
 
 
 class AdminRegisterSerializer(DynamicFieldsModelSerializer):
