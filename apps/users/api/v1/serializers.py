@@ -69,15 +69,6 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
                 ],
                 'use_url': True
             },
-            'email': {
-                'validators': [
-                    UniqueValidator(
-                        queryset=USER.objects.all(),
-                        lookup='iexact',
-                        message=_("You cannot create account with this email address.")
-                    )
-                ]
-            },
             'phone': {
                 'validators': []
             }
@@ -130,6 +121,25 @@ class AdminRegisterSerializer(DynamicFieldsModelSerializer):
             'email', 'full_name', 'phone', 'gender',
             'profile_picture', 'password', 'repeat_password'
         ]
+        extra_kwargs = {
+            'email': {
+                'validators': [
+                    UniqueValidator(
+                        queryset=USER.objects.all(),
+                        lookup='iexact',
+                        message=_("You cannot create account with this email address.")
+                    )
+                ]
+            },
+            'phone': {
+                'validators': [
+                    UniqueValidator(
+                        queryset=USER.objects.all(),
+                        message=_("You cannot create account with this phone number.")
+                    )
+                ]
+            }
+        }
 
     @staticmethod
     def validate_password(password):
@@ -224,6 +234,7 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
 class CustomTokenObtainPairSerializer(DummySerializer, TokenObtainPairSerializer):
 
     def validate(self, attrs):
+        print(attrs)
         data = super().validate(attrs)
         data['user'] = UserDetailSerializer(instance=self.user).data
         return data

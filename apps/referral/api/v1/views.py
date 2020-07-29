@@ -58,16 +58,16 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         serializer_include_fields=['amount']
     )
     def update_amount(self, request, *args, **kwargs):
-        serializer = self.update_referral(request, *args, **kwargs)
         obj = self.get_object()
         if obj.status != COMPLETED:
             return Response({'error': 'Status should be in converted state.'}, status=status.HTTP_400_BAD_REQUEST)
         if not obj.amount:
+            serializer = self.update_referral(request, *args, **kwargs)
             self.add_amount_notification(
                 obj,
                 serializer.data.get('amount')
             )
-            return self.update(request, args, kwargs)
+            return Response(serializer.data)
         else:
             return Response({'error': 'Amount has already been updated once.'}, status=status.HTTP_400_BAD_REQUEST)
 

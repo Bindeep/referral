@@ -6,7 +6,7 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def get_by_natural_key(self, _email_or_phone):
-        return self.get(Q(email=_email_or_phone) | Q(phone=_email_or_phone))
+        return self.get(Q(email__iexact=_email_or_phone) | Q(phone=_email_or_phone))
 
     def _create_user(self, email, password, **extra_fields):
         """
