@@ -62,7 +62,7 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         obj = self.get_object()
         if obj.status != COMPLETED:
             return Response({'error': 'Status should be in converted state.'}, status=status.HTTP_400_BAD_REQUEST)
-        if obj.amount is None:
+        if not obj.amount:
             self.add_amount_notification(
                 obj,
                 serializer.data.get('amount')
