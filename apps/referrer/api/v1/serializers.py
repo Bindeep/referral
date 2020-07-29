@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from rest_framework import serializers
 
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
@@ -12,7 +13,12 @@ class ReferrerSerializer(DynamicFieldsModelSerializer):
     ])
 
     referred = serializers.ReadOnlyField(source='referred_by.name', allow_null=True)
+    earned = serializers.SerializerMethodField()
 
     class Meta:
         model = Referrer
         fields = '__all__'
+
+    @staticmethod
+    def get_earned(referrer):
+        return referrer.referrals.aggregate(total=Sum('amount')).get('total')

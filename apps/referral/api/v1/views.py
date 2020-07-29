@@ -8,7 +8,7 @@ from apps.common.models import UserNotification
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
 from apps.core.viewsets import CreateListRetrieveUpdateViewSet
 from apps.referral.api.v1.serializers import ReferralSerializer
-from apps.referral.constants import FAILED
+from apps.referral.constants import FAILED, COMPLETED
 from apps.referral.models import Referral
 
 
@@ -60,6 +60,8 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
     def update_amount(self, request, *args, **kwargs):
         serializer = self.update_referral(request, *args, **kwargs)
         obj = self.get_object()
+        if obj.status != COMPLETED:
+            return Response({'error': 'Status should be in converted state.'}, status=status.HTTP_400_BAD_REQUEST)
         if obj.amount is None:
             self.add_amount_notification(
                 obj,
@@ -67,7 +69,7 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
             )
             return self.update(request, args, kwargs)
         else:
-            return Response({'error': 'Amount has already been updated once.'} ,status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Amount has already been updated once.'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=True,
