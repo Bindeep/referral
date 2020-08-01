@@ -1,5 +1,12 @@
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
-from apps.referral.models import Referral
+from apps.referral.models import Referral, ReferralLog
+
+
+class ReferralLogSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = ReferralLog
+        fields = '__all__'
 
 
 class ReferralSerializer(DynamicFieldsModelSerializer):

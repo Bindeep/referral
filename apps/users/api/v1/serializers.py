@@ -2,7 +2,6 @@ import copy
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.core.validators import FileExtensionValidator
 from django.db import transaction
 from django.utils.translation import gettext as _
 from rest_framework import serializers
@@ -12,7 +11,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Pass
 from apps.common.models import City
 from apps.company.models import Category, Company
 from apps.core.mixins.serializers import DummySerializer, DynamicFieldsModelSerializer, DummyObject
-from apps.core.validators import validate_attachment
 from apps.referrer.models import Referrer
 from apps.users.models import UserDevice
 

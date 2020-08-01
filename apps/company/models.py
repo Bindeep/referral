@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 
 from apps.common.models import City
 from apps.core.models import BaseModel, SlugModel
+from apps.core.utils.helpers import get_upload_path
 
 User = get_user_model()
 
@@ -32,17 +33,9 @@ class Company(BaseModel, SlugModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, default='')
 
-    category = models.ForeignKey(
-        Category,
-        related_name='companies',
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    city = models.ForeignKey(
+    cities = models.ManyToManyField(
         City,
         related_name='companies',
-        null=True,
-        on_delete=models.SET_NULL
     )
     location = models.CharField(max_length=255, blank=True, default='')
 
@@ -87,3 +80,32 @@ class Company(BaseModel, SlugModel):
 
         random_letter = f'{first_letter.capitalize()}{random.randint(1000, 9999)}{last_letter.capitalize()}'
         return random_letter
+
+
+class Product(BaseModel):
+    category = models.ForeignKey(
+        Category,
+        related_name='products',
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    company = models.ForeignKey(
+        Company,
+        related_name='products',
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=255)
+    image = models.ImageField(
+        upload_to=get_upload_path,
+        blank=True
+    )
+    description = models.TextField()
+    amount = models.FloatField(default=0)
+    commission = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def commission_amount(self):
+        return (self.amount * self.commission) / 100

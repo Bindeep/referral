@@ -1,15 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.common.constants import POSITIVE, NEGATIVE
 from apps.common.models import UserNotification
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
-from apps.core.viewsets import CreateListRetrieveUpdateViewSet
-from apps.referral.api.v1.serializers import ReferralSerializer
-from apps.referral.constants import FAILED, COMPLETED
-from apps.referral.models import Referral
+from apps.core.viewsets import CreateListRetrieveUpdateViewSet, CreateListViewSet
+from apps.referral.api.v1.serializers import ReferralSerializer, ReferralLogSerializer
+from apps.referral.constants import FAILED
+from apps.referral.models import Referral, ReferralLog
 
 
 class ReferralViewSet(CreateListRetrieveUpdateViewSet):
@@ -53,28 +52,6 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         detail=True,
         methods=['put', ],
         serializer_class=ReferralSerializer,
-        url_name='update_amount',
-        url_path='amount-update',
-        serializer_include_fields=['amount']
-    )
-    def update_amount(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.status != COMPLETED:
-            return Response({'error': 'Status should be in converted state.'}, status=status.HTTP_400_BAD_REQUEST)
-        if not obj.amount:
-            serializer = self.update_referral(request, *args, **kwargs)
-            self.add_amount_notification(
-                obj,
-                serializer.data.get('amount')
-            )
-            return Response(serializer.data)
-        else:
-            return Response({'error': 'Amount has already been updated once.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(
-        detail=True,
-        methods=['put', ],
-        serializer_class=ReferralSerializer,
         url_name='update_status',
         url_path='status-update',
         serializer_include_fields=['status']
@@ -109,21 +86,6 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
             )
         })
 
-    @staticmethod
-    def add_amount_notification(obj, amount):
-        UserNotification.objects.create(**{
-            'title': 'Lead amount Updated',
-            'sent_to': obj.referrer.user,
-            'notification_type': POSITIVE,
-            'content': 'Congratulations, You have earned Rs. {} from your lead on {} with {} at {}'.format(
-                amount,
-                obj.name,
-                str(obj.category),
-                str(obj.city),
-
-            )
-        })
-
     def update_referral(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(
@@ -133,3 +95,20 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return serializer
+
+
+class ReferralLogViewSet(CreateListViewSet):
+    queryset = ReferralLog.objects.all()
+    serializer_class = ReferralLogSerializer
+    permission_class_mapper = {
+        'create': [IsCompany | IsSuperUser],
+        'list': [IsCompany | IsSuperUser]
+    }
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ['referral', ]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_company:
+            qs = qs.filter(company=self.request.user.company)
+        return qs
