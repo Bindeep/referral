@@ -39,7 +39,7 @@ class UserViewSet(CreateListRetrieveViewSet):
         detail=False,
         methods=['post', ],
         serializer_class=ReferrerRegisterSerializer,
-        url_name='register_referrer',
+        url_name='referrer_register',
         url_path='referrer-register'
     )
     def referrer_register(self, request, *args, **kwargs):
@@ -49,7 +49,7 @@ class UserViewSet(CreateListRetrieveViewSet):
         detail=False,
         methods=['post', ],
         serializer_class=CompanyRegisterSerializer,
-        url_name='register_company',
+        url_name='company_register',
         url_path='register-company'
     )
     def company_register(self, request, *args, **kwargs):
@@ -59,8 +59,8 @@ class UserViewSet(CreateListRetrieveViewSet):
         detail=False,
         methods=['post', ],
         serializer_class=AdminRegisterSerializer,
-        url_path='register_admin',
-        url_name='admin-register',
+        url_path='register-admin',
+        url_name='admin_register',
     )
     def admin_register(self, request, *args, **kwargs):
         return self.create(request, args, kwargs)

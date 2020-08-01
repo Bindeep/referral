@@ -142,23 +142,23 @@ class ReferrerRegisterSerializer(AdminRegisterSerializer):
 class CompanyRegisterSerializer(AdminRegisterSerializer):
     name = serializers.CharField(max_length=255)
     description = serializers.CharField(required=False)
-    city = serializers.PrimaryKeyRelatedField(
+    cities = serializers.ListField(child=serializers.PrimaryKeyRelatedField(
         queryset=City.objects.all(),
-    )
+    ))
     location = serializers.CharField(max_length=255)
 
     class Meta(AdminRegisterSerializer.Meta):
         model = USER
         fields = AdminRegisterSerializer.Meta.fields + [
             'name', 'description',
-            'city', 'location'
+            'cities', 'location'
         ]
 
     def create(self, validated_data):
         copied_data = copy.deepcopy(validated_data)
         name = validated_data.pop('name', None)
         description = validated_data.pop('description', None)
-        city = validated_data.pop('city', None)
+        cities = validated_data.pop('cities', None)
         location = validated_data.pop('location', None)
 
         with transaction.atomic():
@@ -169,9 +169,9 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
                 description=description,
                 location=location
             )
-            if city:
-                company.cities.add(city)
             company.save()
+            if cities:
+                company.cities.set(cities)
         return DummyObject(**copied_data)
 
 
