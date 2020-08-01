@@ -167,9 +167,10 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
                 user=user,
                 name=name,
                 description=description,
-                city=city,
                 location=location
             )
+            if city:
+                company.cities.add(city)
             company.save()
         return DummyObject(**copied_data)
 
