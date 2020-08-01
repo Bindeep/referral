@@ -77,9 +77,9 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
             'title': 'Lead status Updated',
             'sent_to': obj.referrer.user,
             'notification_type': NEGATIVE if status == FAILED else POSITIVE,
-            'content': 'Your lead status on {} with {} category at city {} has been changed from {} to {}'.format(
+            'content': 'Your lead status on {} at city {} has been changed from {} to {}'.format(
                 obj.name,
-                str(obj.category),
+                str(obj.product),
                 str(obj.city),
                 current_status,
                 status
