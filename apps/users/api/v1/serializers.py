@@ -142,9 +142,6 @@ class ReferrerRegisterSerializer(AdminRegisterSerializer):
 class CompanyRegisterSerializer(AdminRegisterSerializer):
     name = serializers.CharField(max_length=255)
     description = serializers.CharField(required=False)
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(),
-    )
     city = serializers.PrimaryKeyRelatedField(
         queryset=City.objects.all(),
     )
@@ -153,7 +150,7 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
     class Meta(AdminRegisterSerializer.Meta):
         model = USER
         fields = AdminRegisterSerializer.Meta.fields + [
-            'name', 'description', 'category',
+            'name', 'description',
             'city', 'location'
         ]
 
@@ -161,7 +158,6 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
         copied_data = copy.deepcopy(validated_data)
         name = validated_data.pop('name', None)
         description = validated_data.pop('description', None)
-        category = validated_data.pop('category', None)
         city = validated_data.pop('city', None)
         location = validated_data.pop('location', None)
 
@@ -171,7 +167,6 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
                 user=user,
                 name=name,
                 description=description,
-                category=category,
                 city=city,
                 location=location
             )
