@@ -12,14 +12,6 @@ from apps.core.utils.helpers import get_upload_path
 User = get_user_model()
 
 
-class Category(BaseModel, SlugModel):
-    name = models.CharField(max_length=100)
-    description = models.TextField(max_length=600, blank=True)
-
-    def __str__(self):
-        return self.name
-
-
 class CompanyCategory(BaseModel, SlugModel):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=600, blank=True)
@@ -38,8 +30,7 @@ class Company(BaseModel, SlugModel):
     category = models.ForeignKey(
         CompanyCategory,
         related_name='companies',
-        null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
 
     referral_code = models.CharField(max_length=50, unique=True, null=True)
@@ -94,6 +85,19 @@ class Company(BaseModel, SlugModel):
 
         random_letter = f'{first_letter.capitalize()}{random.randint(1000, 9999)}{last_letter.capitalize()}'
         return random_letter
+
+
+class Category(BaseModel, SlugModel):
+    company = models.ForeignKey(
+        Company,
+        related_name='categories',
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=100)
+    description = models.TextField(max_length=600, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(BaseModel, SlugModel):

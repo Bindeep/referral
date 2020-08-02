@@ -32,7 +32,7 @@ class CategoryViewSet(CreateListUpdateViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.user.is_company:
-            qs = qs.filter(products__company=self.request.user.company).distinct()
+            qs = qs.filter(company=self.request.user.company).distinct()
         return qs
 
     def get_serializer_exclude_fields(self):
