@@ -11,6 +11,16 @@ class CategorySerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+        extra_kwargs = {
+            'company': {
+                'required': False
+            }
+        }
+
+    def create(self, validated_data):
+        if self.context.get('company'):
+            validated_data['company'] = self.context.get('company')
+        return super().create(validated_data)
 
 
 class CompanyCategorySerializer(DynamicFieldsModelSerializer):
