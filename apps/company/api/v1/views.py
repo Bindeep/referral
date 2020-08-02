@@ -29,6 +29,18 @@ class CategoryViewSet(CreateListUpdateViewSet):
         'update': [IsSuperUser | IsCompany]
     }
 
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx['company'] = self.company
+        return ctx
+
+    @property
+    def company(self):
+        if self.request.user.is_company:
+            return self.request.user.company
+        else:
+            return None
+
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.user.is_company:
