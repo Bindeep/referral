@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
 from apps.referral.models import Referral, ReferralLog
 
@@ -10,6 +12,7 @@ class ReferralLogSerializer(DynamicFieldsModelSerializer):
 
 
 class ReferralSerializer(DynamicFieldsModelSerializer):
+    commission_amount = serializers.ReadOnlyField()
 
     class Meta:
         model = Referral

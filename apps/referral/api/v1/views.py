@@ -37,7 +37,7 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
     def get_serializer_exclude_fields(self):
         if self.action == 'create':
-            return ['amount', 'status']
+            return ['status']
         return super().get_serializer_exclude_fields()
 
     def get_queryset(self):
