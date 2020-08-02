@@ -36,7 +36,7 @@ class Company(BaseModel, SlugModel):
         on_delete=models.SET_NULL
     )
     category = models.ForeignKey(
-        Category,
+        CompanyCategory,
         related_name='companies',
         null=True,
         on_delete=models.SET_NULL
