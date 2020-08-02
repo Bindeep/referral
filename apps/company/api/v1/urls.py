@@ -32,6 +32,12 @@ router.register(
     basename='product'
 )
 
+router.register(
+    r'product-image',
+    ProductViewSet,
+    basename='product-image'
+)
+
 urlpatterns = [
     path('dashboard', DashboardAPIView.as_view(), name='dashboard')
 ]

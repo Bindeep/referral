@@ -113,10 +113,6 @@ class Product(BaseModel, SlugModel):
         on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255)
-    image = models.ImageField(
-        upload_to=get_upload_path,
-        blank=True
-    )
     description = models.TextField()
     amount = models.FloatField(default=0)
     commission = models.FloatField(default=0)
@@ -127,3 +123,18 @@ class Product(BaseModel, SlugModel):
     @property
     def commission_amount(self):
         return (self.amount * self.commission) / 100
+
+
+class ProductImage(models.Model):
+    image = models.ImageField(
+        upload_to=get_upload_path,
+        verbose_name='Image'
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='images'
+    )
+
+    def __str__(self):
+        return '{0}'.format(self.image)

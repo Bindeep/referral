@@ -1,10 +1,11 @@
 from rest_framework.permissions import IsAuthenticated
 
 from apps.company.api.v1.serializers import CategorySerializer, CompanySerializer, ProductSerializer, \
-    CompanyCategorySerializer
-from apps.company.models import Category, Company, Product, CompanyCategory
+    CompanyCategorySerializer, ProductImageSerializer
+from apps.company.models import Category, Company, Product, CompanyCategory, ProductImage
+from apps.core.mixins.serializers import DynamicFieldsModelSerializer
 from apps.core.permissions import IsSuperUser, IsReadOnly, IsCompany
-from apps.core.viewsets import CreateListUpdateViewSet, ListViewSet, CustomModelViewSet
+from apps.core.viewsets import CreateListUpdateViewSet, ListViewSet, CustomModelViewSet, DestroyViewSet
 
 
 class CompanyViewSet(ListViewSet):
@@ -101,6 +102,25 @@ class ProductViewSet(CustomModelViewSet):
         ctx = super().get_serializer_context()
         ctx['company'] = self.company
         return ctx
+
+    @property
+    def company(self):
+        if self.request.user.is_company:
+            return self.request.user.company
+        else:
+            return None
+
+
+class ProductImageViewSet(DestroyViewSet):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsSuperUser | IsCompany]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.company:
+            qs = qs.filter(product__company=self.company)
+        return qs
 
     @property
     def company(self):
