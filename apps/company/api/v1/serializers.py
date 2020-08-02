@@ -63,7 +63,12 @@ class ProductImageSerializer(DynamicFieldsModelSerializer):
 
 class ProductSerializer(DynamicFieldsModelSerializer):
     commission = serializers.FloatField(min_value=0, max_value=100)
-    images = serializers.ListField(child=Base64ImageField(), write_only=True)
+    images = serializers.ListField(
+        child=Base64ImageField(),
+        write_only=True,
+        required=False,
+        allow_empty=True
+    )
 
     class Meta:
         model = Product
