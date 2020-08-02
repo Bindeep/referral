@@ -38,6 +38,7 @@ class CompanySerializer(DynamicFieldsModelSerializer):
 
 
 class ProductSerializer(DynamicFieldsModelSerializer):
+    commission = serializers.FloatField(min_value=0, max_value=100)
 
     class Meta:
         model = Product

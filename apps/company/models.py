@@ -96,7 +96,7 @@ class Company(BaseModel, SlugModel):
         return random_letter
 
 
-class Product(BaseModel):
+class Product(BaseModel, SlugModel):
     category = models.ForeignKey(
         Category,
         related_name='products',
