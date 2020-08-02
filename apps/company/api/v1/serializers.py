@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.common.api.v1.serializers import CitySerializer
-from apps.company.models import Company, Category, Product
+from apps.company.models import Company, Category, Product, CompanyCategory
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
 
 
@@ -9,6 +9,13 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Category
+        fields = '__all__'
+
+
+class CompanyCategorySerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = CompanyCategory
         fields = '__all__'
 
 
@@ -26,6 +33,7 @@ class CompanySerializer(DynamicFieldsModelSerializer):
         fields['contact_person'] = serializers.ReadOnlyField(source='user.full_name')
         fields['phone_number'] = serializers.ReadOnlyField(source='user.phone')
         fields['email'] = serializers.ReadOnlyField(source='user.email')
+        fields['category'] = serializers.ReadOnlyField(source='category.name')
         return fields
 
 

@@ -20,10 +20,24 @@ class Category(BaseModel, SlugModel):
         return self.name
 
 
+class CompanyCategory(BaseModel, SlugModel):
+    name = models.CharField(max_length=100)
+    description = models.TextField(max_length=600, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Company(BaseModel, SlugModel):
     parent = models.ForeignKey(
         'self',
         related_name='children',
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    category = models.ForeignKey(
+        Category,
+        related_name='companies',
         null=True,
         on_delete=models.SET_NULL
     )

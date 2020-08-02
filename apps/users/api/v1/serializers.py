@@ -9,7 +9,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
 
 from apps.common.models import City
-from apps.company.models import Category, Company
+from apps.company.models import Category, Company, CompanyCategory
 from apps.core.mixins.serializers import DummySerializer, DynamicFieldsModelSerializer, DummyObject
 from apps.referrer.models import Referrer
 from apps.users.models import UserDevice
@@ -146,12 +146,15 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
         queryset=City.objects.all(),
     ))
     location = serializers.CharField(max_length=255)
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCategory.objects.all()
+    )
 
     class Meta(AdminRegisterSerializer.Meta):
         model = USER
         fields = AdminRegisterSerializer.Meta.fields + [
             'name', 'description',
-            'cities', 'location'
+            'cities', 'location', 'category'
         ]
 
     def create(self, validated_data):
@@ -160,6 +163,7 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
         description = validated_data.pop('description', None)
         cities = validated_data.pop('cities', None)
         location = validated_data.pop('location', None)
+        category = validated_data.pop('category', None)
 
         with transaction.atomic():
             user = super().create(validated_data)
@@ -167,7 +171,8 @@ class CompanyRegisterSerializer(AdminRegisterSerializer):
                 user=user,
                 name=name,
                 description=description,
-                location=location
+                location=location,
+                category=category
             )
             company.save()
             if cities:

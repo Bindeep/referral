@@ -1,7 +1,8 @@
 from rest_framework.permissions import IsAuthenticated
 
-from apps.company.api.v1.serializers import CategorySerializer, CompanySerializer, ProductSerializer
-from apps.company.models import Category, Company, Product
+from apps.company.api.v1.serializers import CategorySerializer, CompanySerializer, ProductSerializer, \
+    CompanyCategorySerializer
+from apps.company.models import Category, Company, Product, CompanyCategory
 from apps.core.permissions import IsSuperUser, IsReadOnly, IsCompany
 from apps.core.viewsets import CreateListUpdateViewSet, ListViewSet, CustomModelViewSet
 
@@ -34,6 +35,22 @@ class CategoryViewSet(CreateListUpdateViewSet):
         return super().get_serializer_exclude_fields()
 
 
+class CompanyCategoryViewSet(CreateListUpdateViewSet):
+    queryset = CompanyCategory.objects.all()
+    serializer_class = CompanyCategorySerializer
+    permission_class_mapper = {
+        'list': [IsAuthenticated],
+        'retrieve': [IsAuthenticated],
+        'create': [IsSuperUser],
+        'update': [IsSuperUser]
+    }
+
+    def get_serializer_exclude_fields(self):
+        if self.request.method.upper() == 'POST':
+            return ['slug']
+        return super().get_serializer_exclude_fields()
+
+
 class ProductViewSet(CustomModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -46,6 +63,7 @@ class ProductViewSet(CustomModelViewSet):
     }
 
     filter_map = {
+        'company_category': 'company__category',
         'category': 'category',
         'city': 'company__cities',
     }
