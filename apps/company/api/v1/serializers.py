@@ -29,11 +29,6 @@ class CompanyCategorySerializer(DynamicFieldsModelSerializer):
         model = CompanyCategory
         fields = '__all__'
 
-    def create(self, validated_data):
-        if self.context.get('company'):
-            validated_data['company'] = self.context.get('company')
-        return super().create(validated_data)
-
 
 class CompanySerializer(DynamicFieldsModelSerializer):
 
@@ -73,6 +68,11 @@ class ProductSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+        extra_kwargs = {
+            'company': {
+                'required': False
+            }
+        }
 
     def get_fields(self):
         fields = super().get_fields()
