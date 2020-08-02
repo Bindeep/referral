@@ -41,9 +41,14 @@ class CompanyCategoryViewSet(CreateListUpdateViewSet):
     permission_class_mapper = {
         'list': [IsAuthenticated],
         'retrieve': [IsAuthenticated],
-        'create': [IsSuperUser],
-        'update': [IsSuperUser]
+        'create': [IsSuperUser | IsCompany],
+        'update': [IsSuperUser | IsCompany]
     }
+
+    def get_object(self):
+        if self.request.user.is_company:
+            return self.request.user.company
+        return super().get_object()
 
     def get_serializer_exclude_fields(self):
         if self.request.method.upper() == 'POST':
