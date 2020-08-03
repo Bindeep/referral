@@ -5,6 +5,7 @@ from apps.company.api.v1.serializers import CategorySerializer, CompanySerialize
 from apps.company.models import Category, Company, Product, CompanyCategory, ProductImage
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
 from apps.core.permissions import IsSuperUser, IsReadOnly, IsCompany
+from apps.core.utils.filter import FilterMapBackend
 from apps.core.viewsets import CreateListUpdateViewSet, ListViewSet, CustomModelViewSet, DestroyViewSet
 
 
@@ -28,6 +29,11 @@ class CategoryViewSet(CreateListUpdateViewSet):
         'retrieve': [IsAuthenticated],
         'create': [IsSuperUser | IsCompany],
         'update': [IsSuperUser | IsCompany]
+    }
+    filter_backends = (FilterMapBackend, )
+
+    filter_map = {
+        'company_category': 'company__category',
     }
 
     def get_serializer_context(self):
@@ -80,6 +86,8 @@ class ProductViewSet(CustomModelViewSet):
         'update': [IsSuperUser | IsCompany],
         'destroy': [IsSuperUser | IsCompany],
     }
+
+    filter_backends = (FilterMapBackend, )
 
     filter_map = {
         'company_category': 'company__category',
