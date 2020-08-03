@@ -21,4 +21,4 @@ class ReferrerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_earned(referrer):
-        return referrer.referrals.aggregate(total=Sum('amount')).get('total')
+        return referrer.referrals.aggregate(total=Sum('commission_amount')).get('total')
