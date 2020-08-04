@@ -2,6 +2,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 
 from apps.core.mixins.serializers import DynamicFieldsModelSerializer
+from apps.referral.constants import COMPLETED
 from apps.referrer.models import Referrer
 from apps.users.api.v1.serializers import UserDetailSerializer
 
@@ -21,4 +22,6 @@ class ReferrerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_earned(referrer):
-        return referrer.referrals.aggregate(total=Sum('commission_amount')).get('total')
+        return referrer.referrals.filter(
+            status=COMPLETED
+        ).aggregate(total=Sum('commission_amount')).get('total')

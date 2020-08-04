@@ -7,7 +7,7 @@ from apps.common.models import UserNotification
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
 from apps.core.viewsets import CreateListRetrieveUpdateViewSet, CreateListViewSet
 from apps.referral.api.v1.serializers import ReferralSerializer, ReferralLogSerializer
-from apps.referral.constants import FAILED
+from apps.referral.constants import FAILED, COMPLETED
 from apps.referral.models import Referral, ReferralLog
 
 
@@ -73,17 +73,28 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
 
     @staticmethod
     def add_status_notification(obj, current_status, status):
-        UserNotification.objects.create(**{
-            'title': 'Lead status Updated',
-            'sent_to': obj.referrer.user,
-            'notification_type': NEGATIVE if status == FAILED else POSITIVE,
-            'content': 'Your lead status on {} at city {} has been changed from {} to {}'.format(
-                str(obj.product),
-                str(obj.city),
-                current_status,
-                status
-            )
-        })
+        if status == COMPLETED:
+            UserNotification.objects.create(**{
+                'title': 'Congratulation Lead Completed',
+                'sent_to': obj.referrer.user,
+                'notification_type': POSITIVE,
+                'content': 'Congratulation Your lead on {} at city {} has been successfully converted'.format(
+                    str(obj.product),
+                    str(obj.city),
+                )
+            })
+        else:
+            UserNotification.objects.create(**{
+                'title': 'Lead status Updated',
+                'sent_to': obj.referrer.user,
+                'notification_type': NEGATIVE if status == FAILED else POSITIVE,
+                'content': 'Your lead status on {} at city {} has been changed from {} to {}'.format(
+                    str(obj.product),
+                    str(obj.city),
+                    current_status,
+                    status
+                )
+            })
 
     def update_referral(self, request, *args, **kwargs):
         instance = self.get_object()
