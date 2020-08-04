@@ -33,7 +33,7 @@ class CategoryViewSet(CreateListUpdateViewSet):
     filter_backends = (FilterMapBackend, )
 
     filter_map = {
-        'company_category': 'company__category',
+        'company__category': 'company__category',
     }
 
     def get_serializer_context(self):
@@ -90,9 +90,9 @@ class ProductViewSet(CustomModelViewSet):
     filter_backends = (FilterMapBackend, )
 
     filter_map = {
-        'company_category': 'company__category',
+        'company__category': 'company__category',
         'category': 'category',
-        'city': 'company__cities',
+        'company__cities': 'company__cities',
     }
 
     def get_queryset(self):
