@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 
 from apps.company.api.v1.serializers import CategorySerializer, CompanySerializer, ProductSerializer, \
@@ -87,12 +88,12 @@ class ProductViewSet(CustomModelViewSet):
         'destroy': [IsSuperUser | IsCompany],
     }
 
-    filter_backends = (FilterMapBackend, )
+    filter_backends = (DjangoFilterBackend, )
 
-    filter_map = {
-        'company__category': 'company__category',
-        'category': 'category',
-        'company__cities': 'company__cities',
+    filter_fields = {
+        'company__category': ['exact'],
+        'category': ['exact'],
+        'company__cities': ['exact'],
     }
 
     def get_queryset(self):
