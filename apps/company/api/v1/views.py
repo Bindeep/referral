@@ -31,11 +31,9 @@ class CategoryViewSet(CreateListUpdateViewSet):
         'create': [IsSuperUser | IsCompany],
         'update': [IsSuperUser | IsCompany]
     }
-    filter_backends = (FilterMapBackend, )
+    filter_backends = (DjangoFilterBackend, )
 
-    filter_map = {
-        'company__category': 'company__category',
-    }
+    filter_fields = ['company__category']
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
