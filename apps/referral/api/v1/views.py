@@ -1,8 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from apps.common.constants import POSITIVE, NEGATIVE
+from apps.common.constants import POSITIVE, NEGATIVE, INFO
 from apps.common.models import UserNotification
 from apps.core.permissions import IsCompany, IsSuperUser, IsReferrer
 from apps.core.viewsets import CreateListRetrieveUpdateViewSet, CreateListViewSet
@@ -70,6 +71,41 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
                 status
             )
         return Response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=['put', ],
+        serializer_class=ReferralSerializer,
+        url_name='update_product',
+        url_path='product-update',
+        serializer_include_fields=['product']
+    )
+    def update_product(self, request, *args, **kwargs):
+        obj = self.get_object()
+        previous_product = str(obj.product)
+        if obj.status == COMPLETED:
+            raise ValidationError('Product cannot be updated for converted lead.')
+
+        serializer = self.update_referral(request, *args, **kwargs)
+        obj.refresh_from_db()
+        obj.update_commission()
+
+        new_product = str(obj.product)
+        self.add_notification(obj, previous_product, new_product)
+        return Response(serializer.data)
+
+    @staticmethod
+    def add_notification(obj, prev_product, new_product):
+        UserNotification.objects.create(**{
+            'title': 'Product has been Updated',
+            'sent_to': obj.referrer.user,
+            'notification_type': INFO,
+            'content': 'Your Product for lead {} at city {} has been updated to {}'.format(
+                prev_product,
+                str(obj.city),
+                new_product
+            )
+        })
 
     @staticmethod
     def add_status_notification(obj, current_status, status):

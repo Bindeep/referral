@@ -1,13 +1,20 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 
-from apps.company.api.v1.serializers import CategorySerializer, CompanySerializer, ProductSerializer, \
-    CompanyCategorySerializer, ProductImageSerializer
-from apps.company.models import Category, Company, Product, CompanyCategory, ProductImage
-from apps.core.mixins.serializers import DynamicFieldsModelSerializer
-from apps.core.permissions import IsSuperUser, IsReadOnly, IsCompany
-from apps.core.utils.filter import FilterMapBackend
-from apps.core.viewsets import CreateListUpdateViewSet, ListViewSet, CustomModelViewSet, DestroyViewSet
+from apps.company.api.v1.serializers import (
+    CategorySerializer, CompanySerializer,
+    ProductSerializer, CompanyCategorySerializer,
+    ProductImageSerializer
+)
+from apps.company.models import (
+    Category, Company, Product,
+    CompanyCategory, ProductImage
+)
+from apps.core.permissions import IsSuperUser, IsCompany
+from apps.core.viewsets import (
+    CreateListUpdateViewSet, ListViewSet,
+    CustomModelViewSet, DestroyViewSet
+)
 
 
 class CompanyViewSet(ListViewSet):

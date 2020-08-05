@@ -49,6 +49,10 @@ class Referral(BaseModel):
     def __str__(self):
         return f"{str(self.referrer)} refers to {self.name}"
 
+    def update_commission(self):
+        self.commission_amount = self.product.commission_amount
+        self.save()
+
 
 class ReferralLog(BaseModel):
     # to add logs for referral
