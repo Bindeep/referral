@@ -24,13 +24,13 @@ APPS_DIR = os.path.join(PROJECT_DIR, 'apps')
 BASE_DIR = os.path.join(PROJECT_DIR, 'config')
 
 
-# Quick-start development settings - unsuitable for production
+# Quick-start development settings - unsuitable for production.txt
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: keep the secret key used in production.txt secret!
 SECRET_KEY = 'w=2%0_pvo+k3#%-0q!4*)q54!3pm*!&%!hm&@3yr1)6m)85dqg'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production.txt!
 DEBUG = True
 
 ALLOWED_HOSTS = []
