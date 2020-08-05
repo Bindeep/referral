@@ -22,7 +22,7 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
     filter_backends = (DjangoFilterBackend, )
     filter_fields = ['status']
 
-    queryset = Referral.objects.all()
+    queryset = Referral.objects.select_related('city', 'referrer', 'company', 'product')
     serializer_class = ReferralSerializer
 
     def get_serializer_context(self):
@@ -114,8 +114,9 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
                 'title': 'Congratulation Lead Completed',
                 'sent_to': obj.referrer.user,
                 'notification_type': POSITIVE,
-                'content': 'Congratulation Your lead on {} at city {} has been successfully converted'.format(
+                'content': 'Congratulation Your lead on {} for {} at city {} has been successfully converted'.format(
                     str(obj.product),
+                    str(obj.referrer),
                     str(obj.city),
                 )
             })
@@ -124,8 +125,9 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
                 'title': 'Lead status Updated',
                 'sent_to': obj.referrer.user,
                 'notification_type': NEGATIVE if status == FAILED else POSITIVE,
-                'content': 'Your lead status on {} at city {} has been changed from {} to {}'.format(
+                'content': 'Your lead on {} for {} at city {} has been changed from {} to {}'.format(
                     str(obj.product),
+                    str(obj.referrer),
                     str(obj.city),
                     current_status,
                     status
