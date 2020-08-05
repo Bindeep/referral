@@ -156,5 +156,5 @@ class ReferralLogViewSet(CreateListViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.user.is_company:
-            qs = qs.filter(company=self.request.user.company)
+            qs = qs.filter(referral__company=self.request.user.company)
         return qs
