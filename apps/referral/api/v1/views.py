@@ -17,7 +17,8 @@ class ReferralViewSet(CreateListRetrieveUpdateViewSet):
         'create': [IsReferrer],
         'list': [IsReferrer | IsCompany | IsSuperUser],
         'retrieve': [IsReferrer | IsCompany | IsSuperUser],
-        'update': [IsCompany | IsSuperUser],
+        'update_status': [IsCompany | IsSuperUser],
+        'update_product': [IsCompany | IsSuperUser],
     }
     filter_backends = (DjangoFilterBackend, )
     filter_fields = ['status']
