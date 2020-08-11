@@ -28,6 +28,7 @@ class UserViewSet(CreateListRetrieveViewSet):
     permission_class_mapper = {
         'referrer_register': [AllowAny],
         'company_register': [IsSuperUser],
+        'create': [IsSuperUser],
         'admin_register': [IsSuperUser],
         'list': [IsSuperUser],
         'retrieve': [IsSuperUser]
@@ -70,4 +71,3 @@ class UserDeviceViewSet(CreateViewSet):
     queryset = UserDevice.objects.all()
     serializer_class = UserDeviceSerializer
     permission_classes = [AllowAny]
-
